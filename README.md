@@ -135,7 +135,7 @@ REG_NUMBER_START | 1001 | Starting number if column is empty
 
 Status | Subject | Template Doc URL | CC | BCC | Attachment URLs
 ------ | ------- | ---------------- | -- | --- | ---
-Invited | Invitation to {{EventName}} | Google Doc URL | optional | optional | optional Google drive file url
+Approved | Registration Approved for {{EventName}} | Google Doc URL | optional | optional | optional Google drive file url
 
 Template variables use {{Variable}} syntax and are replaced using row data or EVENT_CONTEXT values.
 
@@ -147,7 +147,7 @@ Key | Value
 --- | -----
 EventName | Annual Meetup 2026
 EventDate | 2026-02-15
-
+EventVenue | Delhi
 ---
 
 ## Logs Sheet (LOGS)
