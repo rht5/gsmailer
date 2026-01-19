@@ -33,7 +33,8 @@ It is designed for event organizers, NGOs, and teams who want to send personaliz
    - Library ID: 1PUNerdrrA-ZaUAegdlgkMvbmyJW_yLRrIHEg_wy-h69HE11Fd0mU_SeQ
    - Identifier: GSMailer
    - Version: 2.0.0  (Select latest)
-5. Save and reload your Google Sheet
+5. Add code from the Basic usage section in the editor
+6. Save and reload your Google Sheet
 
 ---
 
