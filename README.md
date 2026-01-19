@@ -116,7 +116,7 @@ GSMailer requires a sheet named SETTINGS with three columns: Key, Value, Help.
 
 Key | Example Value | Description
 --- | ------------- | -----------
-DATA_SHEET | Attendees | Main sheet containing the rows of participants
+DATA_SHEET | Sheet1 | Main sheet containing the rows of participants
 STATUS_COLUMN | Status | Column that determines which email rule applies
 EMAIL_COLUMN | Email | Column containing recipient email addresses
 SENT_FLAG_COLUMN | Email Sent | Column marking emails as already sent
