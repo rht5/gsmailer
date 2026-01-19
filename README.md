@@ -39,7 +39,7 @@ It is designed for event organizers, NGOs, and teams who want to send personaliz
 6. Reload your Google Sheet.
 7. In Google Sheet. You will see a new menu: 📨 GSMailer. Go to GSMailer → Admin / Setup → Initial Setup 
 8. Configure your SETTINGS, EMAIL_RULES, EVENT_CONTEXT as needed.
-
+9. Your Main Data sheet needs 3 extra columns for: 'Email Sent',	'Last Sent At' and 'Error'. If needed, you can rename them and put new names in Settings.
 ---
 
 ## Basic Usage
