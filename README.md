@@ -79,6 +79,38 @@ function generateRegistrationNumbers() {
 
 ---
 
+## Email Templates (Google Docs)
+
+GSMailer uses Google Docs as the source for email content.
+This allows event organizers and NGOs to design rich, formatted emails without writing any code.
+
+Emails are sent as HTML, generated automatically from the Google Doc.
+
+**How It Works**
+1. You create a Google Doc as your email template
+2. Insert placeholders using {{VariableName}}
+3. GSMailer replaces placeholders with values from: Your main data sheet (row values) and The EVENT_CONTEXT sheet (global event values)
+4. The document is converted to HTML and sent via Gmail
+
+**Example**
+
+```
+Dear {{Name}},
+
+Thank you for registering for {{EventName}}.
+
+📅 Date: {{EventDate}}  
+📍 Venue: {{EventVenue}}
+
+Your registration number is {{RegistrationNumber}}.
+
+We look forward to seeing you!
+
+Warm regards,  
+{{OrganizerName}}
+```
+
+---
 ## Settings Sheet (SETTINGS)
 
 GSMailer requires a sheet named SETTINGS with three columns: Key, Value, Help.
@@ -98,6 +130,7 @@ REG_NUMBER_PATTERN | EVT-{{NUMBER}} | Pattern for registration numbers
 REG_NUMBER_START | 1001 | Starting number if column is empty
 
 ---
+
 
 ## Email Rules Sheet (EMAIL_RULES)
 
