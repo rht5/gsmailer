@@ -30,11 +30,16 @@ It is designed for event organizers, NGOs, and teams who want to send personaliz
 2. Go to Extensions → Apps Script
 3. Click + New Project or use an existing one
 4. Add GSMailer as a library:
+   - Click Libraries (+)
    - Library ID: 1PUNerdrrA-ZaUAegdlgkMvbmyJW_yLRrIHEg_wy-h69HE11Fd0mU_SeQ
    - Identifier: GSMailer
-   - Version: 2.0.0  (Select latest)
+   - Version: 2.0.0  (or select latest)
+   - Click Add
 5. Add code from the Basic usage section in the editor
-6. Save and reload your Google Sheet
+6. Save, run onOpen() and Grant Permissions.
+7. Reload your Google Sheet.
+8. In Google Sheet. You will see a new menu: 📨 GSMailer. Go to GSMailer → Admin / Setup → Initial Setup 
+9. Configure your SETTINGS, EMAIL_RULES, EVENT_CONTEXT as needed.
 
 ---
 
