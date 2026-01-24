@@ -16,9 +16,8 @@ It is designed for event organizers, NGOs, and teams who want to send personaliz
 - Use Google Docs as HTML templates with dynamic variables
 - Supports batch sending and dry run mode
 - Optional registration number generation
-- Optional Email attachements via Google drive URL
+- Optional Email attachments via Google Drive URL
 - Event context variables for common info (like event name, date)
-- Logs email activity in a dedicated LOGS sheet
 - Preview emails before sending
 - Supports CC and BCC recipients
 
@@ -39,7 +38,7 @@ It is designed for event organizers, NGOs, and teams who want to send personaliz
 6. Reload your Google Sheet.
 7. In Google Sheet. You will see a new menu: 📨 GSMailer. Go to GSMailer → Admin / Setup → Initial Setup 
 8. Configure your SETTINGS, EMAIL_RULES, EVENT_CONTEXT as needed.
-9. Your Main Data sheet needs 3 extra columns for: 'Email Sent',	'Last Sent At' and 'Error'. If needed, you can rename them and put new names in Settings.
+9. Your Main Data sheet needs 3 extra columns for: 'Email Sent',	'Last Email At' and 'Email Error'. If needed, you can rename them and put new names in Settings.
 ---
 
 ## Basic Usage
@@ -110,9 +109,8 @@ Warm regards,
 ```
 
 ---
-## Settings Sheet (SETTINGS)
-
-GSMailer requires a sheet named SETTINGS with three columns: Key, Value, Help.
+## Settings Sheet
+(SETTINGS)
 
 Key | Example Value | Description
 --- | ------------- | -----------
@@ -120,8 +118,8 @@ DATA_SHEET | Sheet1 | Main sheet containing the rows of participants
 STATUS_COLUMN | Status | Column that determines which email rule applies
 EMAIL_COLUMN | Email | Column containing recipient email addresses
 SENT_FLAG_COLUMN | Email Sent | Column marking emails as already sent
-LAST_SENT_COLUMN | Last Sent At | Timestamp of last email sent
-ERROR_COLUMN | Error | Column to store error messages
+LAST_SENT_COLUMN | Last Email At | Timestamp of last email sent
+ERROR_COLUMN | Email Error | Column to store error messages
 BATCH_LIMIT | 10 | Maximum number of emails per batch
 REG_NUMBER_ENABLED | no | Enable registration number generation (yes/no)
 REG_NUMBER_COLUMN | Registration No | Column to store registration numbers
@@ -130,6 +128,14 @@ REG_NUMBER_START | 1001 | Starting number if column is empty
 
 ---
 
+(EVENT_CONTEXT)
+
+Key | Value
+--- | -----
+EventName | Annual Meetup 2026
+EventDate | 2026-02-15
+EventVenue | Delhi
+---
 
 ## Email Rules Sheet (EMAIL_RULES)
 
@@ -141,25 +147,6 @@ Template variables use {{Variable}} syntax and are replaced using row data or EV
 
 ---
 
-## Event Context Sheet (EVENT_CONTEXT)
-
-Key | Value
---- | -----
-EventName | Annual Meetup 2026
-EventDate | 2026-02-15
-EventVenue | Delhi
----
-
-## Logs Sheet (LOGS)
-
-Automatically tracks:
-- Timestamp
-- Row number
-- Email
-- Status
-- Result (SENT / DRY RUN / ERROR)
-
----
 
 ## Changelog
 
