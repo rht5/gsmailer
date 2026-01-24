@@ -73,6 +73,9 @@ function generateRegistrationNumbers() {
   GSMailer.generateRegistrationNumbers();
 }
 
+function showAboutDialog() {
+  GSMailer.showAboutDialog();
+}
 ```
 
 ---
