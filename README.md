@@ -1,6 +1,6 @@
 # GSMailer
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Version](https://img.shields.io/badge/version-2.0.3-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 GSMailer is a production-ready Google Apps Script library that automates
