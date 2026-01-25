@@ -109,13 +109,13 @@ Warm regards,
 
 This sheet allows you to configure settings and event details. It will be created by the Initial setup button from the menu. 
 
-![Settings](settings.jpg)
+![Settings](/screenshots/settings.jpg)
 ---
 
 ## Email Rules Sheet (EMAIL_RULES)
 This sheet allows you to define multiple rules for sending emails. It will be created by the Initial setup button from the menu.
 
-![Rules](Rules.jpg)
+![Rules](/screenshots/rules.jpg)
 ---
 
 
