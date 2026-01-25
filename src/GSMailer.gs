@@ -1,16 +1,14 @@
 /************************************
- * GS Mailer – FINAL PRODUCTION VERSION
+ * GSMailer – FINAL PRODUCTION VERSION
  ************************************/
 
-const SYSTEM_SHEETS = ['SETTINGS', 'EMAIL_RULES', 'EVENT_CONTEXT', 'LOGS'];
-const LIB_VERSION = '1.0.0';
+const SYSTEM_SHEETS = ['SETTINGS', 'EMAIL_RULES'];
+const LIB_VERSION = '2.0.3';
 const LIB_AUTHOR = 'Rohit Verma';
 
 const SHEETS = {
   SETTINGS: 'SETTINGS',
-  RULES: 'EMAIL_RULES',
-  CONTEXT: 'EVENT_CONTEXT',
-  LOGS: 'LOGS'
+  RULES: 'EMAIL_RULES'
 };
 
 /* =====================
@@ -33,7 +31,7 @@ function onOpen() {
     .addItem('🧩 Initial Setup (Create / Detect Sheets)', 'initialSetup')
     .addItem('✅ Validate Settings', 'validateSetup')
     .addItem('🧪 Test Emails (Dry Run)', 'sendEmailsDryRun')
-    .addItem('ℹ️ About SheetEventFlow', 'showAboutDialog');
+    .addItem('ℹ️ About GSMailer', 'showAboutDialog');
     // .addItem('♻️ Reset Email Status (All Rows)', 'resetSentFlags');
 
   mainMenu
@@ -46,11 +44,11 @@ function showAboutDialog() {
   const ui = SpreadsheetApp.getUi();
   const html = HtmlService.createHtmlOutput(
     `<div style="font-family:sans-serif; padding:15px;">
-      <h2>SheetEventFlow 📬</h2>
+      <h2>GSMailer 📬</h2>
       <p><b>Version:</b> ${LIB_VERSION}</p>
       <p><b>Author:</b> ${LIB_AUTHOR}</p>
       <p>Rule-based event email automation for Google Sheets.</p>
-      <p>Visit the GitHub repository for full documentation.</p>
+      <p>Visit the GitHub repository for full documentation. https://github.com/rht5/gsmailer</p>
     </div>`
   )
   .setWidth(350)
@@ -75,40 +73,142 @@ function initialSetup() {
 
   if (!ss.getSheetByName(SHEETS.SETTINGS)) {
     const s = ss.insertSheet(SHEETS.SETTINGS);
-    s.appendRow(['Key', 'Value', 'Help']);
-
-    s.getRange('A2:C12').setValues([
+    
+    s.getRange('A1:C13').setValues([
+      ['SETTINGS (Change value below as needed. Do not change Key)', '', '',],
+      ['Key', 'Value', 'Description'],
       ['DATA_SHEET', detectedDataSheet, 'Main data sheet containing attendee rows'],
       ['STATUS_COLUMN', 'Status', 'Column that controls which email rule applies'],
       ['EMAIL_COLUMN', 'Email', 'Recipient email column'],
       ['SENT_FLAG_COLUMN', 'Email Sent', 'System column to mark email as sent'],
-      ['LAST_SENT_COLUMN', 'Last Sent At', 'Timestamp of email sending'],
-      ['ERROR_COLUMN', 'Error', 'Error message if sending fails'],
-      ['BATCH_LIMIT', '50', 'Max emails per execution'],
-      ['REG_NUMBER_ENABLED', 'FALSE', 'Enable auto registration number generation'],
+      ['LAST_SENT_COLUMN', 'Last Email At', 'Timestamp of email sending'],
+      ['ERROR_COLUMN', 'Email Error', 'Error message if sending fails'],
+      ['BATCH_LIMIT', '10', 'Max emails per execution'],
+      ['REG_NUMBER_ENABLED', 'no', 'Enable auto registration number generation (yes/no)'],
       ['REG_NUMBER_COLUMN', 'Registration No', 'Column to store registration number'],
       ['REG_NUMBER_PATTERN', 'EVT-{{NUMBER}}', 'Optional pattern for registration number'],
-      ['REG_NUMBER_START', '1001', 'Starting number if column is empty']
+      ['REG_NUMBER_START', '001', 'Starting number if column is empty']
     ]);
+
+    s.getRange(1, 1, 1, 3).merge();
+  
+    s.getRange('E1:F6').setValues([
+    ['EVENT_CONTEXT', ''],
+    ['Key', 'Value'],
+    ['Event Name', 'Self Empowerment'],
+    ['Event Date', '18 Jan 2026, 5 PM IST'],
+    ['Event Venue', 'Location Here'],
+    ['Organizer Name', 'XYZ Foundation'],
+    ]);
+    s.getRange('E1:F1').merge();
+
+    styleTable(s);
+    styleContextTable(s);
+
+    const rule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(['yes', 'no'], true) // true = dropdown
+    .setAllowInvalid(false)
+    .build();
+
+    s.getRange('B10').setDataValidation(rule);
+
+    s.getRange('B10')
+    .setHorizontalAlignment('center')
+    .setBackground('#ecfeff'); // subtle highlight
+
   }
+
 
   if (!ss.getSheetByName(SHEETS.RULES)) {
-    ss.insertSheet(SHEETS.RULES)
-      .appendRow(['Status', 'Subject', 'Template Doc URL', 'CC', 'BCC']);
+    const sr = ss.insertSheet(SHEETS.RULES);
+    sr.getRange('A1:F2').setValues([
+      ['Status', 'Subject', 'Template Doc URL', 'CC', 'BCC', 'Attachment URLs'],
+      [
+        'Approved',
+        'Registration Approved for {{Event Name}}',
+        'https://docs.google.com/document/d/1Pm04gdIcz-YP3gjV-x1mPT5Zf7lA0MR4ysarJe2tBg4/edit?usp=sharing',
+        '',
+        '',
+        ''
+      ]
+    ]);
+
+
+    styleRulesTable(sr);
   }
 
-  if (!ss.getSheetByName(SHEETS.CONTEXT)) {
-    ss.insertSheet(SHEETS.CONTEXT)
-      .appendRow(['Key', 'Value']);
-  }
 
-  if (!ss.getSheetByName(SHEETS.LOGS)) {
-    ss.insertSheet(SHEETS.LOGS)
-      .appendRow(['Timestamp', 'Row', 'Email', 'Status', 'Result']);
-  }
-
-  SpreadsheetApp.getUi().alert('Initial setup completed.');
+  //SpreadsheetApp.getUi().alert('Initial setup completed.');
 }
+
+
+function styleTable(s) {
+  const tableRange = s.getRange('A1:C13');
+
+  s.getRange('A1:C1')
+    .setBackground('#b1c2c7')
+    .setFontColor('#000000')
+    .setFontWeight('bold')
+    .setHorizontalAlignment('center');
+
+  s.getRange('A2:C2').setFontWeight('bold');
+  s.getRange('A2:A13').setBackground('#efefef');
+
+  applyTableBorders(tableRange);
+
+  s.setColumnWidths(1, 1, 200);
+  s.setColumnWidths(2, 1, 130);
+  s.setColumnWidths(3, 1, 320);
+}
+
+
+function styleContextTable(s) {
+  const tableRange = s.getRange('E1:F13');
+
+  s.getRange('E1:F1')
+    .setBackground('#e4cfce')
+    .setFontWeight('bold')
+    .setHorizontalAlignment('center');
+
+  s.getRange('E2:F2').setFontWeight('bold');
+  s.getRange('E3:F13').setBackground('#f9fafb');
+
+  applyTableBorders(tableRange);
+
+  s.setColumnWidths(5, 1, 120);
+  s.setColumnWidths(6, 1, 180);
+}
+
+
+function styleRulesTable(s) {
+  const tableRange = s.getRange('A1:F13');
+
+  s.getRange('A1:F1')
+    .setBackground('#b1c2c7')
+    .setFontWeight('bold')
+    .setHorizontalAlignment('center');
+
+  s.getRange('A2:F13').setBackground('#f9fafb');
+
+  applyTableBorders(tableRange);
+
+  s.setColumnWidths(1, 1, 110);
+  s.setColumnWidths(2, 1, 230);
+  s.setColumnWidths(3, 1, 320);
+  s.setColumnWidths(6, 1, 120);
+
+  s.getRange('B2:C2').setWrap(true);
+}
+
+function applyTableBorders(range) {
+  range.setBorder(
+    true, true, true, true,
+    true, true,
+    '#d1d5db',
+    SpreadsheetApp.BorderStyle.SOLID
+  );
+}
+
 
 /* =====================
    ENTRY POINTS
@@ -157,7 +257,7 @@ function generateRegistrationNumbers() {
     sheet.getRange(i + 1, map[col] + 1).setValue(value);
   }
 
-  alertUser('Registration numbers generated.');
+  //alertUser('Registration numbers generated.');
 }
 
 /* =====================
@@ -206,7 +306,8 @@ function processEmails(isDryRun) {
         const email = row[map[settings.EMAIL_COLUMN]];
         const sent = row[map[settings.SENT_FLAG_COLUMN]];
 
-        if (!email || sent === 'YES' || !rules[status]) continue;
+        if (!email || sent || !rules[status]) continue;
+
 
         const ctx = {
           ...eventContext,
@@ -214,11 +315,11 @@ function processEmails(isDryRun) {
         };
 
         const subject = renderTemplate(rules[status].subject, ctx);
-        // This 'body' is now HTML because of the updated getDocBody function
+
         const bodyHtml = renderTemplate(rules[status].body, ctx);
 
         if (!isDryRun) {
-          // MODIFIED SEND FUNCTION
+
             const attachments = getAttachmentBlobsFromUrls(
               rules[status].attachmentUrls
             );
@@ -238,14 +339,18 @@ function processEmails(isDryRun) {
 
           sheet.getRange(rowIndex, map[settings.SENT_FLAG_COLUMN] + 1).setValue('YES');
           sheet.getRange(rowIndex, map[settings.LAST_SENT_COLUMN] + 1).setValue(new Date());
+        } else {
+          sheet.getRange(rowIndex, map[settings.SENT_FLAG_COLUMN] + 1).setValue('Test - Success');
+          sheet.getRange(rowIndex, map[settings.LAST_SENT_COLUMN] + 1).setValue(new Date());
         }
 
-        logEvent(rowIndex, email, status, isDryRun ? 'DRY RUN' : 'SENT');
+        //logEvent(rowIndex, email, status, isDryRun ? 'DRY RUN' : 'SENT');
         count++;
 
       } catch (e) {
+        sheet.getRange(rowIndex, map[settings.SENT_FLAG_COLUMN] + 1).setValue('FAILED');
         sheet.getRange(rowIndex, map[settings.ERROR_COLUMN] + 1).setValue(e.message);
-        logEvent(rowIndex, '', '', 'ERROR: ' + e.message);
+        //logEvent(rowIndex, '', '', 'ERROR: ' + e.message);
       }
     }
 
@@ -294,13 +399,23 @@ function previewSelectedRow() {
 /* =====================
    LOADERS / VALIDATION / UTIL
 ===================== */
+
 function loadSettings() {
   const sheet = SpreadsheetApp.getActive().getSheetByName(SHEETS.SETTINGS);
-  const data = sheet.getDataRange().getValues().slice(1);
+
+  // Get only columns A to C, starting from row 3 (skip header)
+  const lastRow = sheet.getLastRow();
+  const data = sheet.getRange(3, 1, lastRow - 1, 3).getValues();
+
   const s = {};
-  data.forEach(([k, v]) => s[k] = v);
+  data.forEach(([k, v, _c]) => {
+    s[k] = v; // column C is ignored for now
+  });
+
   return s;
 }
+
+
 
 function loadRules() {
   const sheet = SpreadsheetApp.getActive().getSheetByName(SHEETS.RULES);
@@ -321,13 +436,27 @@ function loadRules() {
 }
 
 function loadEventContext() {
-  const sheet = SpreadsheetApp.getActive().getSheetByName(SHEETS.CONTEXT);
+  const sheet = SpreadsheetApp.getActive().getSheetByName(SHEETS.SETTINGS);
   if (!sheet) return {};
-  const data = sheet.getDataRange().getValues().slice(1);
+
+  const lastRowEF = Math.max(
+    sheet.getRange("E:E").getLastRow(),
+    sheet.getRange("F:F").getLastRow()
+  );
+
+  if (lastRowEF < 2) return {};
+
+  const data = sheet.getRange(3, 5, lastRowEF - 1, 2).getValues(); // E:F
   const ctx = {};
-  data.forEach(([k, v]) => k && (ctx[k] = v ?? ''));
+
+  data.forEach(([k, v]) => {
+    if (k) ctx[k] = v ?? '';
+  });
+
   return ctx;
 }
+
+
 
 function validateTemplateVariables(rules, dataHeaders, eventContext) {
   // Schema only — no row data
@@ -389,13 +518,6 @@ function buildContext(h, r) {
   return c;
 }
 
-function getDocBodyxx(url) {
-  const id = url.match(/[-\w]{25,}/)[0];
-  Logger.log(DocumentApp.openById(id).getBody());
-  return DocumentApp.openById(id).getBody().getText();
-}
-
-
 function getDocBody(url) {
   DriveApp.getRootFolder(); // ensure Drive scope
   const id = url.match(/[-\w]{25,}/)[0];
@@ -453,16 +575,79 @@ function resetSentFlags() {
   alertUser('Email flags reset.');
 }
 
-function logEvent(row, email, status, result) {
-  SpreadsheetApp.getActive()
-    .getSheetByName(SHEETS.LOGS)
-    .appendRow([new Date(), row, email, status, result]);
-}
+
+
+const SETTINGS_SCHEMA = {
+  DATA_SHEET:        { required: true },
+  STATUS_COLUMN:     { required: true },
+  EMAIL_COLUMN:      { required: true },
+  SENT_FLAG_COLUMN:  { required: true },
+  LAST_SENT_COLUMN:  { required: false },
+  ERROR_COLUMN:      { required: false },
+  BATCH_LIMIT:       { required: true, type: 'number' },
+
+  REG_NUMBER_ENABLED:{ required: false, type: 'boolean' },
+  REG_NUMBER_COLUMN: { requiredIf: 'REG_NUMBER_ENABLED' },
+  REG_NUMBER_START:  { requiredIf: 'REG_NUMBER_ENABLED', type: 'number' },
+  REG_NUMBER_PATTERN:{ required: false }
+};
+
 
 function validateSetup() {
-  loadSettings(); loadRules(); loadEventContext();
+
+  const settings = loadSettings();
+  const rules = loadRules();
+  const ctx = loadEventContext();
+
+  validateSettings(settings);
+  validateDataSheet(settings);
+  validateRules(rules);
+  validateTemplateVariables(
+    rules,
+    getDataHeaders(settings),
+    ctx
+  );
+
   alertUser('Setup validated successfully.');
 }
+
+
+function validateSettings(settings) {
+  const errors = [];
+
+  Object.entries(SETTINGS_SCHEMA).forEach(([key, rule]) => {
+    const value = settings[key];
+
+    // Required
+    if (rule.required && !value) {
+      errors.push(`Missing value for setting: ${key}`);
+    }
+
+    // Required if enabled
+    if (rule.requiredIf) {
+      const enabled = isTruthy(settings[rule.requiredIf]);
+      if (enabled && !value) {
+        errors.push(`${key} is required when ${rule.requiredIf} is enabled`);
+      }
+    }
+
+    // Type checks
+    if (value && rule.type === 'number' && isNaN(Number(value))) {
+      errors.push(`${key} must be a number`);
+    }
+
+    if (value && rule.type === 'boolean' && !isBooleanLike(value)) {
+      errors.push(`${key} must be TRUE or FALSE`);
+    }
+  });
+
+  if (errors.length) {
+    throw new Error('Settings validation failed:\n• ' + errors.join('\n• '));
+  }
+}
+
+
+
 
 function alertUser(m) {
   SpreadsheetApp.getUi().alert(m);
@@ -497,6 +682,53 @@ function getAttachmentBlobsFromUrls(urlString) {
   });
 
   return blobs;
+}
+
+function validateDataSheet(settings) {
+  const ss = SpreadsheetApp.getActive();
+  const sheet = ss.getSheetByName(settings.DATA_SHEET);
+
+  if (!sheet) {
+    throw new Error(`DATA_SHEET "${settings.DATA_SHEET}" not found`);
+  }
+
+  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+  const map = mapHeaders(headers);
+
+  [
+    settings.STATUS_COLUMN,
+    settings.EMAIL_COLUMN,
+    settings.SENT_FLAG_COLUMN
+  ].forEach(col => {
+    if (col && !(col in map)) {
+      throw new Error(`Missing column in data sheet: ${col}`);
+    }
+  });
+}
+
+function validateRules(rules) {
+  if (!Object.keys(rules).length) {
+    throw new Error('No email rules found in EMAIL_RULES sheet');
+  }
+
+  Object.entries(rules).forEach(([status, rule]) => {
+    if (!status) throw new Error('EMAIL_RULES has empty Status value');
+    if (!rule.subject) throw new Error(`Missing subject for status: ${status}`);
+    if (!rule.body) throw new Error(`Missing template for status: ${status}`);
+  });
+}
+
+function isTruthy(v) {
+  return ['TRUE', 'YES', '1'].includes(String(v).toUpperCase());
+}
+
+function isBooleanLike(v) {
+  return ['TRUE', 'FALSE', 'YES', 'NO', '1', '0'].includes(String(v).toUpperCase());
+}
+
+function getDataHeaders(settings) {
+  const sheet = SpreadsheetApp.getActive().getSheetByName(settings.DATA_SHEET);
+  return sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
 }
 
 
