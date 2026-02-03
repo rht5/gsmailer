@@ -3,8 +3,7 @@
 ![Version](https://img.shields.io/badge/version-2.0.3-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-GSMailer is a production-ready Google Apps Script library that automates
-event-based email workflows directly from Google Sheets using Google Docs templates.
+Send Approval Emails from Google Sheets using Google Docs templates.
 
 It is designed for event organisers, NGOs, and teams who want to easily and reliably send personalised emails from Sheets.
 
