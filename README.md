@@ -3,7 +3,7 @@
 ![Version](https://img.shields.io/badge/version-2.0.3-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-Send Approval Emails from Google Sheets using Google Docs templates.
+Send personalised Emails (Approved/declined, etc.) from Google Sheets using Google Docs templates.
 
 It is designed for event organisers, NGOs, and teams who want to easily and reliably send personalised emails from Sheets.
 
