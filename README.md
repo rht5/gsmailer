@@ -30,7 +30,7 @@ It is designed for event organisers, NGOs, and teams who want to easily and reli
    - Click Libraries (+)
    - Library ID: 1PUNerdrrA-ZaUAegdlgkMvbmyJW_yLRrIHEg_wy-h69HE11Fd0mU_SeQ
    - Identifier: GSMailer
-   - Version: 26  (or select latest)
+   - Version: 30  (or select latest)
    - Click Add
 4. Add the code below to the code editor
 
