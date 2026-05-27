@@ -70,9 +70,9 @@ function showAboutDialog() {
 
 5. Save, run onOpen() and Grant Permissions.
 6. In Google Sheet. You will see a new menu: 📨 GSMailer.
-7. Important: Go to GSMailer → Admin / Setup → **Initial Setup** 
-8. Configure your SETTINGS, EMAIL_RULES, EVENT_CONTEXT as needed.
-9. Your Main Data sheet needs 3 extra columns for: 'Email Sent',	'Last Email At' and 'Email Error'. If needed, you can rename them in Settings.
+7. Important: Go to GSMailer → Admin / Setup → **Initial Setup**
+8. **Initial Setup** will also add two extra columns to your Data sheet 'Email Sent' and 'Last Email At'.
+9. Configure your SETTINGS, EMAIL_RULES, EVENT_CONTEXT as needed.
 ---
 
 
